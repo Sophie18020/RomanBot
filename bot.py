@@ -289,12 +289,6 @@ async def handle_randomira_call(message: Message):
         response1 = "Да нет, ты просто не поняла"
         await message.reply(response1)
     
-    elif "👍" in text:
-        await message.answer("Ну супер")
-    
-    elif "👎" in text:
-        await message.answer("Да нет, ты просто не поняла")
-    
     elif random.random() < 0.2:  # 20% вероятность ответа
         random_replies = ["Интересно... но я занят.", "Ты уверен, что хочешь об этом говорить?", "Моя логика сломалась, попробуй еще раз."]
         await message.reply(random.choice(random_replies))
