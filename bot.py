@@ -290,7 +290,7 @@ async def handle_randomira_call(message: Message):
         await message.reply(response1)
     
     elif "👍" in text:
-        await message.answer("Ну супер)")
+        await message.answer("Ну супер")
     
     elif "👎" in text:
         await message.answer("Да нет, ты просто не поняла")
