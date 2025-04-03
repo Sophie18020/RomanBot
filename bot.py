@@ -251,7 +251,7 @@ def get_rating_keyboard():
 @dp.message(Command("advice"))
 async def send_prediction(message: Message):
     prediction = get_unique_prediction()
-    await message.answer(f" {prediction}")
+    await message.answer(f" {prediction}", reply_markup=get_rating_keyboard())
 
 @dp.message()
 async def handle_randomira_call(message: Message):
@@ -259,7 +259,7 @@ async def handle_randomira_call(message: Message):
     
     if "подскажите" in text:
         prediction = get_unique_prediction()
-        await message.reply(f" {prediction}")
+        await message.reply(f" {prediction}", reply_markup=get_rating_keyboard())
     
     elif "устала" in text:
         responses1 = [
