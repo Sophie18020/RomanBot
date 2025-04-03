@@ -209,23 +209,6 @@ def get_unique_prediction():
         shuffled_predictions = random.sample(predictions, len(predictions))
     return shuffled_predictions.pop()
 
-
-# Создание бота и диспетчера
-bot = Bot(token=TOKEN)
-dp = Dispatcher()
-
-# Команда /start
-@dp.message(Command("start"))
-async def start_command(message: Message):
-    await message.answer('Доброго времени суток! Меня зовут Роман. Чтобы получить от меня совет, используй /advice или просто введи "Подскажите"')
-
-@dp.message()
-async def rate_prediction(message: Message):
-    if "👍" in message.text:
-        await message.answer("Ну супер)")
-    elif "👎" in message.text:
-        await message.answer("Да нет, ты просто не поняла")
-
 random_replies = [
     "А ты знал, что 42 — ответ на главный вопрос жизни? 🤔",
     "Вижу в будущем... обед. Ты ведь ещё не ел? 🍔",
@@ -246,28 +229,47 @@ random_replies = [
 ]
 
 
-@dp.message()
-async def random_chat_reply(message: Message):
-    if random.random() < 0.2:  # 20% вероятность ответа
-        await message.reply(random.choice(random_replies))
+# Создание бота и диспетчера
+bot = Bot(token=TOKEN)
+dp = Dispatcher()
 
-# Команда /advicce
+@dp.message(Command("start"))
+async def start_command(message: Message):
+    await message.answer('Доброго времени суток! Меня зовут Роман. Чтобы получить от меня совет, используй /advice или просто введи "Подскажите"')
+
+# Обработчик для команды /advice
 @dp.message(Command("advice"))
 async def send_prediction(message: Message):
     prediction = get_unique_prediction()
     await message.answer(f" {prediction}")
 
-# Ответ на слово "подскажите" в группе
+# Ответ на слово "подскажите"
 @dp.message()
 async def handle_randomira_call(message: Message):
     if "подскажите" in message.text.lower():
         prediction = get_unique_prediction()
         await message.reply(f" {prediction}")
 
+# Логика случайных ответов
+@dp.message()
+async def random_chat_reply(message: Message):
+    if random.random() < 0.2:  # 20% вероятность ответа
+        await message.reply(random.choice(random_replies))
+
+# Логика для реакции на эмодзи 👍 и 👎
+@dp.message()
+async def rate_prediction(message: Message):
+    if "👍" in message.text:
+        await message.answer("Ну супер)")
+    elif "👎" in message.text:
+        await message.answer("Да нет, ты просто не поняла")
+
+
+
 # Запуск бота
 async def main():
-    print("Бот запущен...")
-    await dp.start_polling(bot)
+     print("Бот запущен...")
+     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+     asyncio.run(main())
