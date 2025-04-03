@@ -271,7 +271,7 @@ async def handle_randomira_call(message: Message):
         ]
         await message.reply(random.choice(responses1))
 
-    elif "блять" or "заебали" or "нахуй" in text:
+    elif any(word in text for word in ["блять", "заебали", "нахуй"]) in text:
         responses2 = [
             "Ну ты, конечно, даешь..",
             "Нет, так нельзя!!!",
@@ -288,6 +288,12 @@ async def handle_randomira_call(message: Message):
     elif "хуйня" in text:
         response1 = "Да нет, ты просто не поняла"
         await message.reply(response1)
+
+    elif "👍" in text:
+        await message.answer("Ну супер)")  # Теперь правильно обрабатывается отдельно
+
+    elif "👎" in text:
+        await message.answer("Да нет, ты просто не поняла")
     
     elif random.random() < 0.2:  # 20% вероятность ответа
         random_replies = ["Интересно... но я занят.", "Ты уверен, что хочешь об этом говорить?", "Моя логика сломалась, попробуй еще раз."]
