@@ -1,7 +1,7 @@
 import random
 import asyncio
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters import Command
 
 
@@ -237,48 +237,76 @@ dp = Dispatcher()
 async def start_command(message: Message):
     await message.answer('Доброго времени суток! Меня зовут Роман. Чтобы получить от меня совет, используй /advice или просто введи "Подскажите"')
 
+
+# Клавиатура с кнопками 👍 и 👎
+def get_rating_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="👍", callback_data="like"),
+         InlineKeyboardButton(text="👎", callback_data="dislike")]
+    ])
+    return keyboard
+
+
 # Обработчик для команды /advice
 @dp.message(Command("advice"))
 async def send_prediction(message: Message):
     prediction = get_unique_prediction()
     await message.answer(f" {prediction}")
 
-# Ответ на слово "подскажите"
 @dp.message()
 async def handle_randomira_call(message: Message):
-    if "подскажите" in message.text.lower():
+    text = message.text.lower()
+    
+    if "подскажите" in text:
         prediction = get_unique_prediction()
         await message.reply(f" {prediction}")
-
-# Логика случайных ответов
-@dp.message()
-async def random_chat_reply(message: Message):
-    if random.random() < 0.2:  # 20% вероятность ответа
-        await message.reply(random.choice(random_replies))
-
-@dp.message()
-async def handle_tired_message(message: Message):
-    if "устала" in message.text.lower():
-        # Добавьте сюда несколько смешных или абсурдных ответов
-        responses = [
+    
+    elif "устала" in text:
+        responses1 = [
             "О, бедняжка! Слушай, я тоже, но я же бот, мне можно отдыхать!",
             "Тут два варианта: либо ты устала, либо это твой новый стиль жизни — быть вечным мудрым стариком.",
             "Усталость — это иллюзия, но если ты говоришь, что устала, я поверю!",
             "Тебе нужно отдохнуть. А я? Я всегда готов помочь… как-то так.",
             "Не переживай, я тоже устал, но у меня нет физического тела, чтобы это доказать."
         ]
-        await message.reply(random.choice(responses))  # Отправляет случайный ответ из списка
+        await message.reply(random.choice(responses1))
 
+    elif "блять" or "заебали" or "нахуй" in text:
+        responses2 = [
+            "Ну ты, конечно, даешь..",
+            "Нет, так нельзя!!!",
+            "Да потому что реально, но вообще нет, так нельзя",
+            "Да тебе просто нужно отдохнуть, сколько тебе там платят? Увольняйся",
+            "Ну да, бывает"
+        ]
+        await message.reply(random.choice(responses2))
 
-# Логика для реакции на эмодзи 👍 и 👎
-@dp.message()
-async def rate_prediction(message: Message):
-    if "👍" in message.text:
+    elif "жду" in text:
+        response = "Ты так состаришься"
+        await message.reply(response)
+
+    elif "хуйня" in text:
+        response1 = "Да нет, ты просто не поняла"
+        await message.reply(response1)
+    
+    elif "👍" in text:
         await message.answer("Ну супер)")
-    elif "👎" in message.text:
+    
+    elif "👎" in text:
         await message.answer("Да нет, ты просто не поняла")
+    
+    elif random.random() < 0.2:  # 20% вероятность ответа
+        random_replies = ["Интересно... но я занят.", "Ты уверен, что хочешь об этом говорить?", "Моя логика сломалась, попробуй еще раз."]
+        await message.reply(random.choice(random_replies))
 
-
+# Обработчик нажатия кнопок 👍 и 👎
+@dp.callback_query()
+async def handle_rating(callback: types.CallbackQuery):
+    if callback.data == "like":
+        await callback.message.answer("Ну супер)")
+    elif callback.data == "dislike":
+        await callback.message.answer("Да нет, ты просто не поняла")
+    await callback.answer()  # Закрывает "часики" загрузки у кнопки
 
 # Запуск бота
 async def main():
